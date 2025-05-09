@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PrivPrivacy - Health Share Usage Description (NSHealthShareUsageDescription)
+Privacy - Health Share Usage Description (NSHealthShareUsageDescription)
+Privacy - Health Share Usage Description (NSHealthShareUsageDescription)
+Privacy - Health Share Usage Description (NSHealthShareUsageDescription)
+Privacy - Health Share Usage Description (NSHealthShareUsageDescription)
+Privacy - Health Share Usage Description (NSHealthShareUsageDescription)
+</key>
+	<string>This app requires access to your step count data to track your daily activity.</string>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>This app requires access to your step count data to track your daily activity.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>This app requires access to your step count data to track your daily activity.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>This app requires access to your step count </string>
+</dict>
+</plist>
