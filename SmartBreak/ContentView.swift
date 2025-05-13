@@ -4,7 +4,6 @@
 //
 //  Created by Hugo Peyron on 09/05/2025.
 //
-
 import SwiftUI
 import HealthKit
 import Combine
@@ -18,98 +17,27 @@ struct ContentView: View {
   @State private var isFirstLoad = true
   @State private var animationTimer: AnyCancellable?
   @State private var lastHapticHundreds = 0
+  @State private var refreshCompleted = false
 
   var body: some View {
     NavigationStack {
       VStack {
+
         Spacer()
 
-        // Animated step count display
-        Text("\(animatedStepCount)")
-          .font(.system(size: 96, weight: .thin))
-          .monospacedDigit()
-          .contentTransition(.numericText())
-          .animation(.spring(duration: 0.2), value: animatedStepCount)
+        steps
 
-        Text("steps today")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-          .padding(.bottom, 10)
-
-        // Goal progress indicator
         VStack(spacing: 8) {
-          // Progress bar
-          GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-              // Background
-              Capsule()
-                .fill(Color.secondary.opacity(0.2))
-                .frame(height: 4)
-
-              // Progress
-              Capsule()
-                .fill(
-                  stepManager.goalProgress >= 1.0 ?
-                  Color.green :
-                    Color.primary
-                )
-                .frame(width: max(geometry.size.width * CGFloat(stepManager.goalProgress), 0), height: 4)
-                .animation(.spring(duration: 1.0), value: stepManager.goalProgress)
-            }
-          }
-          .frame(height: 4)
-
-          // Goal value (non-interactive)
-          Text("Goal: \(String(stepManager.stepGoal))")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
+          progressBar
+          stepGoal
         }
         .padding(.horizontal)
         .padding(.bottom, 30)
 
         Spacer()
 
-        // Tab bar
-        HStack(spacing: 20) {
-          Spacer()
+        buttons
 
-          // Stats button
-          Button {
-            showingStats = true
-          } label: {
-            Image(systemName: "chart.line.uptrend.xyaxis")
-              .frame(width: 24, height: 24)
-              .padding()
-              .background(.background)
-              .clipShape(.capsule)
-              .overlay {
-                Capsule()
-                  .stroke(lineWidth: 0.5)
-              }
-          }
-          .sensoryFeedback(.selection, trigger: showingStats)
-
-          // Goal button
-          Button {
-            showingGoalSetting = true
-          } label: {
-            Image(systemName: "target")
-              .frame(width: 24, height: 24)
-              .padding()
-              .background(.background)
-              .clipShape(.capsule)
-              .overlay {
-                Capsule()
-                  .stroke(lineWidth: 0.5)
-              }
-          }
-          .sensoryFeedback(.selection, trigger: showingGoalSetting)
-
-          Spacer()
-        }
-        .foregroundStyle(.foreground)
-        .padding(.bottom, 10)
       }
       .padding()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -129,11 +57,177 @@ struct ContentView: View {
         // Check for crossing hundreds boundaries
         checkAndTriggerHaptics(oldValue: oldValue, newValue: newValue)
       }
+      .onChange(of: stepManager.isRefreshing) { _, isRefreshing in
+        if !isRefreshing && refreshCompleted {
+          // Trigger haptic feedback when refresh completes
+          let generator = UINotificationFeedbackGenerator()
+          generator.notificationOccurred(.success)
+
+          // Reset the completion flag after a delay
+          DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            refreshCompleted = false
+          }
+        }
+      }
       .sensoryFeedback(.success, trigger: stepManager.goalJustReached)
       .onAppear {
         stepManager.setupData()
       }
     }
+  }
+
+  @ViewBuilder
+  private var steps: some View {
+    Text("\(animatedStepCount)")
+      .font(.system(size: 96, weight: .thin))
+      .monospacedDigit()
+      .contentTransition(.numericText())
+      .animation(.spring(duration: 0.2), value: animatedStepCount)
+
+    Text("steps today")
+      .font(.caption)
+      .foregroundStyle(.secondary)
+      .padding(.bottom, 10)
+  }
+
+  @ViewBuilder
+  private var statusMessage: some View {
+    // Status message is now integrated in stepGoal
+    EmptyView()
+  }
+
+  // Updated progress bar without GeometryReader
+  private var progressBar: some View {
+    VStack(spacing: 8) {
+      ZStack(alignment: .leading) {
+        // Background bar
+        Capsule()
+          .fill(Color.secondary.opacity(0.2))
+          .frame(height: 4)
+
+        // Progress bar
+        Capsule()
+          .fill(
+            stepManager.goalProgress >= 1.0 ? Color.green : Color.primary
+          )
+          .frame(height: 4)
+          .containerRelativeFrame([.horizontal]) { length, _ in
+            max(length * CGFloat(stepManager.goalProgress), 0)
+          }
+          .animation(.spring(duration: 1.0), value: stepManager.goalProgress)
+      }
+    }
+    .frame(height: 4)
+  }
+
+  private var stepGoal: some View {
+    HStack {
+      Text("Goal: \(String(stepManager.stepGoal))")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      Spacer()
+
+      // Discrete status message replacing "Last updated"
+      if stepManager.isRefreshing {
+        HStack(spacing: 4) {
+          ProgressView()
+            .controlSize(.mini)
+            .scaleEffect(0.6)
+
+          Text("Syncing...")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+        }
+      } else if refreshCompleted {
+        HStack(spacing: 4) {
+          Image(systemName: "checkmark")
+            .foregroundStyle(.green)
+            .font(.caption2)
+
+          Text("Updated")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+        }
+        .transition(.opacity.combined(with: .scale))
+      } else {
+        Text("Last updated \(formatLastUpdate(stepManager.lastRefreshTime))")
+          .font(.caption2)
+          .foregroundStyle(.tertiary)
+      }
+    }
+  }
+
+  private var buttons: some View {
+    VStack {
+      // Refresh button with enhanced animation
+      Button {
+        Task {
+          await stepManager.refreshAllData()
+          refreshCompleted = true
+        }
+      } label: {
+        Image(systemName: "arrow.2.circlepath")
+          .symbolEffect(.rotate, isActive: stepManager.isRefreshing)
+          .symbolEffect(.bounce, value: stepManager.isRefreshing)
+          .frame(width: 24, height: 24)
+          .padding()
+          .clipShape(.capsule)
+          .overlay {
+            Capsule()
+              .stroke(
+                stepManager.isRefreshing ? Color.blue.opacity(0.5) : .gray,
+                lineWidth: stepManager.isRefreshing ? 1.5 : 0.5
+              )
+              .animation(.bouncy, value: stepManager.isRefreshing)
+          }
+      }
+      .background(.background)
+      .disabled(stepManager.isRefreshing)
+      .scaleEffect(stepManager.isRefreshing ? 0.95 : 1.0)
+      .animation(.bouncy, value: stepManager.isRefreshing)
+      .sensoryFeedback(.impact(weight: .light), trigger: stepManager.isRefreshing)
+
+      HStack(spacing: 20) {
+        Spacer()
+
+        // Stats button
+        Button {
+          showingStats = true
+        } label: {
+          Image(systemName: "chart.line.uptrend.xyaxis")
+            .frame(width: 24, height: 24)
+            .padding()
+            .background(.background)
+            .clipShape(.capsule)
+            .overlay {
+              Capsule()
+                .stroke(lineWidth: 0.5)
+            }
+        }
+        .sensoryFeedback(.selection, trigger: showingStats)
+
+        // Goal button
+        Button {
+          showingGoalSetting = true
+        } label: {
+          Image(systemName: "target")
+            .frame(width: 24, height: 24)
+            .padding()
+            .background(.background)
+            .clipShape(.capsule)
+            .overlay {
+              Capsule()
+                .stroke(lineWidth: 0.5)
+            }
+        }
+        .sensoryFeedback(.selection, trigger: showingGoalSetting)
+
+        Spacer()
+      }
+      .padding(.bottom, 10)
+    }
+    .foregroundStyle(.foreground)
   }
 
   private func checkAndTriggerHaptics(oldValue: Int, newValue: Int) {
@@ -231,6 +325,22 @@ struct ContentView: View {
     }
 
     return result
+  }
+
+  // Format the last update time
+  private func formatLastUpdate(_ date: Date) -> String {
+    let now = Date()
+    let timeInterval = now.timeIntervalSince(date)
+
+    if timeInterval < 60 {
+      return "just now"
+    } else if timeInterval < 3600 {
+      let minutes = Int(timeInterval / 60)
+      return "\(minutes)m ago"
+    } else {
+      let hours = Int(timeInterval / 3600)
+      return "\(hours)h ago"
+    }
   }
 }
 

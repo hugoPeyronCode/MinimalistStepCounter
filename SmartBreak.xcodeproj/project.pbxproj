@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		507EB0C32DD39E8000E9143E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 507EB0C22DD39E8000E9143E /* WidgetKit.framework */; };
+		507EB0C52DD39E8000E9143E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 507EB0C42DD39E8000E9143E /* SwiftUI.framework */; };
+		507EB0D62DD39E8100E9143E /* SmartBreakWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 507EB0C02DD39E8000E9143E /* SmartBreakWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		507EB0D42DD39E8100E9143E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 507EB0192DCBBA1800E9143E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 507EB0BF2DD39E8000E9143E;
+			remoteInfo = SmartBreakWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		507EB0DB2DD39E8100E9143E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				507EB0D62DD39E8100E9143E /* SmartBreakWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		507EB0212DCBBA1800E9143E /* SmartBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		507EB0C02DD39E8000E9143E /* SmartBreakWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SmartBreakWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		507EB0C22DD39E8000E9143E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		507EB0C42DD39E8000E9143E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		507EB0DC2DD39EDD00E9143E /* SmartBreakWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartBreakWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -18,6 +52,29 @@
 			);
 			target = 507EB0202DCBBA1800E9143E /* SmartBreak */;
 		};
+		507EB0DA2DD39E8100E9143E /* Exceptions for "SmartBreakWidget" folder in "SmartBreakWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 507EB0BF2DD39E8000E9143E /* SmartBreakWidgetExtension */;
+		};
+		507EB0E12DD39F1400E9143E /* Exceptions for "SmartBreak" folder in "SmartBreakWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WidgetManager/WidgetSharedData.swift,
+			);
+			target = 507EB0BF2DD39E8000E9143E /* SmartBreakWidgetExtension */;
+		};
+		507EB0E52DD3A28600E9143E /* Exceptions for "SmartBreakWidget" folder in "SmartBreak" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WidgetEntry.swift,
+				WidgetProvider.swift,
+				WidgetView.swift,
+			);
+			target = 507EB0202DCBBA1800E9143E /* SmartBreak */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -25,8 +82,18 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				507EB0632DCE4DCD00E9143E /* Exceptions for "SmartBreak" folder in "SmartBreak" target */,
+				507EB0E12DD39F1400E9143E /* Exceptions for "SmartBreak" folder in "SmartBreakWidgetExtension" target */,
 			);
 			path = SmartBreak;
+			sourceTree = "<group>";
+		};
+		507EB0C62DD39E8000E9143E /* SmartBreakWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				507EB0E52DD3A28600E9143E /* Exceptions for "SmartBreakWidget" folder in "SmartBreak" target */,
+				507EB0DA2DD39E8100E9143E /* Exceptions for "SmartBreakWidget" folder in "SmartBreakWidgetExtension" target */,
+			);
+			path = SmartBreakWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -39,13 +106,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		507EB0BD2DD39E8000E9143E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				507EB0C52DD39E8000E9143E /* SwiftUI.framework in Frameworks */,
+				507EB0C32DD39E8000E9143E /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		507EB0182DCBBA1800E9143E = {
 			isa = PBXGroup;
 			children = (
+				507EB0DC2DD39EDD00E9143E /* SmartBreakWidgetExtension.entitlements */,
 				507EB0232DCBBA1800E9143E /* SmartBreak */,
+				507EB0C62DD39E8000E9143E /* SmartBreakWidget */,
+				507EB0C12DD39E8000E9143E /* Frameworks */,
 				507EB0222DCBBA1800E9143E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +133,18 @@
 			isa = PBXGroup;
 			children = (
 				507EB0212DCBBA1800E9143E /* SmartBreak.app */,
+				507EB0C02DD39E8000E9143E /* SmartBreakWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		507EB0C12DD39E8000E9143E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				507EB0C22DD39E8000E9143E /* WidgetKit.framework */,
+				507EB0C42DD39E8000E9143E /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +157,12 @@
 				507EB01D2DCBBA1800E9143E /* Sources */,
 				507EB01E2DCBBA1800E9143E /* Frameworks */,
 				507EB01F2DCBBA1800E9143E /* Resources */,
+				507EB0DB2DD39E8100E9143E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				507EB0D52DD39E8100E9143E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				507EB0232DCBBA1800E9143E /* SmartBreak */,
@@ -82,6 +173,28 @@
 			productName = SmartBreak;
 			productReference = 507EB0212DCBBA1800E9143E /* SmartBreak.app */;
 			productType = "com.apple.product-type.application";
+		};
+		507EB0BF2DD39E8000E9143E /* SmartBreakWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 507EB0D72DD39E8100E9143E /* Build configuration list for PBXNativeTarget "SmartBreakWidgetExtension" */;
+			buildPhases = (
+				507EB0BC2DD39E8000E9143E /* Sources */,
+				507EB0BD2DD39E8000E9143E /* Frameworks */,
+				507EB0BE2DD39E8000E9143E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				507EB0C62DD39E8000E9143E /* SmartBreakWidget */,
+			);
+			name = SmartBreakWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = SmartBreakWidgetExtension;
+			productReference = 507EB0C02DD39E8000E9143E /* SmartBreakWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -94,6 +207,9 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					507EB0202DCBBA1800E9143E = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					507EB0BF2DD39E8000E9143E = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -113,12 +229,20 @@
 			projectRoot = "";
 			targets = (
 				507EB0202DCBBA1800E9143E /* SmartBreak */,
+				507EB0BF2DD39E8000E9143E /* SmartBreakWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		507EB01F2DCBBA1800E9143E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		507EB0BE2DD39E8000E9143E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +259,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		507EB0BC2DD39E8000E9143E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		507EB0D52DD39E8100E9143E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 507EB0BF2DD39E8000E9143E /* SmartBreakWidgetExtension */;
+			targetProxy = 507EB0D42DD39E8100E9143E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		507EB02D2DCBBA1900E9143E /* Debug */ = {
@@ -321,6 +460,62 @@
 			};
 			name = Release;
 		};
+		507EB0D82DD39E8100E9143E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SmartBreakWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YA24P24868;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SmartBreakWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartBreakWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cortex.SmartBreak.SmartBreakWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		507EB0D92DD39E8100E9143E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SmartBreakWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YA24P24868;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SmartBreakWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartBreakWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cortex.SmartBreak.SmartBreakWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -338,6 +533,15 @@
 			buildConfigurations = (
 				507EB0302DCBBA1900E9143E /* Debug */,
 				507EB0312DCBBA1900E9143E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		507EB0D72DD39E8100E9143E /* Build configuration list for PBXNativeTarget "SmartBreakWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				507EB0D82DD39E8100E9143E /* Debug */,
+				507EB0D92DD39E8100E9143E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
