@@ -19,19 +19,31 @@ struct ContentView: View {
   @State private var lastHapticHundreds = 0
   @State private var refreshCompleted = false
 
+  @State private var currentHour = Calendar.current.component(.hour, from: Date())
+  @State private var currentMinutes = Calendar.current.component(.minute, from: Date())
+
   var body: some View {
     NavigationStack {
-      VStack {
+      VStack(spacing: 8) {
 
         Spacer()
 
-        steps
+        ZStack {
+          Clock()
+          steps
+            .offset(y: 30)
+        }
 
         VStack(spacing: 8) {
           progressBar
-          stepGoal
+          Text(generateContextualMessage())
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .padding(.bottom, 10)
+            .multilineTextAlignment(.center)
+            .animation(.easeInOut(duration: 0.3), value: animatedStepCount)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 30)
         .padding(.bottom, 30)
 
         Spacer()
@@ -76,18 +88,106 @@ struct ContentView: View {
     }
   }
 
+  private func generateContextualMessage() -> String {
+      let timeString = String(format: "%02d:%02d", currentHour, currentMinutes)
+      let goalProgress = stepManager.goalProgress
+      let steps = animatedStepCount
+
+      // Early morning (5-8h)
+      if currentHour >= 5 && currentHour < 8 {
+          if steps < 1000 {
+              return "Good morning! Ready to walk?"
+          } else if steps < 3000 {
+              return "\(steps) steps before 8am"
+          } else {
+              return "Great early start – \(steps) steps!"
+          }
+      }
+
+      // Morning (8-12h)
+      else if currentHour >= 8 && currentHour < 12 {
+          if steps < 1000 {
+              return "Time to get moving"
+          } else if goalProgress < 0.25 {
+              return "\(steps) steps so far"
+          } else {
+              return "Strong morning – \(steps) steps"
+          }
+      }
+
+      // Midday (12-14h)
+      else if currentHour >= 12 && currentHour < 14 {
+          if goalProgress >= 1.0 {
+              return "Goal crushed! \(steps) steps"
+          } else if goalProgress >= 0.5 {
+              return "Halfway there – \(steps) steps"
+          } else if steps < 1000 {
+              return "Lunch break walking?"
+          } else {
+              return "\(steps) steps at \(timeString)"
+          }
+      }
+
+      // Afternoon (14-18h)
+      else if currentHour >= 14 && currentHour < 18 {
+          if goalProgress >= 1.0 {
+              return "Goal complete! \(steps) steps"
+          } else if goalProgress >= 0.75 {
+              return "Almost there – \(stepManager.stepGoal - steps) to go"
+          } else if steps < 1000 {
+              return "Afternoon walk time?"
+          } else {
+              return "\(steps) steps at \(timeString)"
+          }
+      }
+
+      // Evening (18-21h)
+      else if currentHour >= 18 && currentHour < 21 {
+          if goalProgress >= 1.0 {
+              return "Daily goal achieved!"
+          } else if goalProgress >= 0.8 {
+              return "So close – \(stepManager.stepGoal - steps) left"
+          } else if steps < 1000 {
+              return "Evening stroll?"
+          } else {
+              return "\(steps) steps today"
+          }
+      }
+
+      // Night (21-24h)
+      else if currentHour >= 21 {
+          if goalProgress >= 1.0 {
+              return "Day complete – \(steps) steps"
+          } else if goalProgress >= 0.9 {
+              return "Just \(stepManager.stepGoal - steps) steps away"
+          } else if steps < 1000 {
+              return "Quiet day at home"
+          } else {
+              return "\(steps) steps today"
+          }
+      }
+
+      // Late night/Early morning (0-5h)
+      else {
+          if goalProgress >= 1.0 {
+              return "Night owl – \(steps) steps"
+          } else if steps < 1000 {
+              return "Rest well"
+          } else {
+              return "\(steps) steps"
+          }
+      }
+  }
+
   @ViewBuilder
   private var steps: some View {
-    Text("\(animatedStepCount)")
-      .font(.system(size: 96, weight: .thin))
-      .monospacedDigit()
-      .contentTransition(.numericText())
-      .animation(.spring(duration: 0.2), value: animatedStepCount)
-
-    Text("steps today")
-      .font(.caption)
-      .foregroundStyle(.secondary)
-      .padding(.bottom, 10)
+    VStack {
+      Text("\(animatedStepCount)")
+        .font(.system(size: 96, weight: .thin))
+        .monospacedDigit()
+        .contentTransition(.numericText())
+        .animation(.spring(duration: 0.2), value: animatedStepCount)
+    }
   }
 
   @ViewBuilder
