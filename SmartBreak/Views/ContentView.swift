@@ -18,6 +18,9 @@ struct ContentView: View {
   @State private var animationTimer: AnyCancellable?
   @State private var lastHapticHundreds = 0
   @State private var refreshCompleted = false
+  @State private var stepsBeforeRefresh = 0
+  @State private var consecutiveRefreshCount = 0
+  @State private var showNoMovementMessage = false
 
   @State private var currentHour = Calendar.current.component(.hour, from: Date())
   @State private var currentMinutes = Calendar.current.component(.minute, from: Date())
@@ -36,14 +39,18 @@ struct ContentView: View {
 
         VStack(spacing: 8) {
           progressBar
-          Text(generateContextualMessage())
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .padding(.bottom, 10)
-            .multilineTextAlignment(.center)
-            .animation(.easeInOut(duration: 0.3), value: animatedStepCount)
+          HStack {
+            Text(generateContextualMessage())
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .padding(.bottom, 10)
+              .multilineTextAlignment(.center)
+              .animation(.easeInOut(duration: 0.3), value: animatedStepCount)
+              .animation(.easeInOut(duration: 0.3), value: stepManager.isRefreshing)
+              .animation(.easeInOut(duration: 0.3), value: refreshCompleted)
+              .animation(.easeInOut(duration: 0.3), value: showNoMovementMessage)
+          }
         }
-        .padding(.horizontal, 30)
         .padding(.bottom, 30)
 
         Spacer()
@@ -75,6 +82,21 @@ struct ContentView: View {
           let generator = UINotificationFeedbackGenerator()
           generator.notificationOccurred(.success)
 
+          // Check if steps didn't change
+          if stepsBeforeRefresh == stepManager.todaySteps {
+            consecutiveRefreshCount += 1
+            if consecutiveRefreshCount >= 2 {
+              showNoMovementMessage = true
+              // Hide the message after 3 seconds
+              DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                showNoMovementMessage = false
+              }
+            }
+          } else {
+            consecutiveRefreshCount = 0
+            showNoMovementMessage = false
+          }
+
           // Reset the completion flag after a delay
           DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             refreshCompleted = false
@@ -84,11 +106,30 @@ struct ContentView: View {
       .sensoryFeedback(.success, trigger: stepManager.goalJustReached)
       .onAppear {
         stepManager.setupData()
+        // Update time every minute
+        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+          currentHour = Calendar.current.component(.hour, from: Date())
+          currentMinutes = Calendar.current.component(.minute, from: Date())
+        }
       }
     }
   }
 
   private func generateContextualMessage() -> String {
+      // Check for refresh states first
+      if stepManager.isRefreshing {
+          return "Syncing with Health..."
+      }
+
+      if refreshCompleted {
+          return "Updated!"
+      }
+
+      if showNoMovementMessage {
+          return "Nope, you did not move. Time to move now!"
+      }
+
+      // Regular contextual messages based on time and activity
       let timeString = String(format: "%02d:%02d", currentHour, currentMinutes)
       let goalProgress = stepManager.goalProgress
       let steps = animatedStepCount
@@ -183,7 +224,7 @@ struct ContentView: View {
   private var steps: some View {
     VStack {
       Text("\(animatedStepCount)")
-        .font(.system(size: 96, weight: .thin))
+        .font(.system(size: 80, weight: .thin))
         .monospacedDigit()
         .contentTransition(.numericText())
         .animation(.spring(duration: 0.2), value: animatedStepCount)
@@ -228,33 +269,10 @@ struct ContentView: View {
 
       Spacer()
 
-      // Discrete status message replacing "Last updated"
-      if stepManager.isRefreshing {
-        HStack(spacing: 4) {
-          ProgressView()
-            .controlSize(.mini)
-            .scaleEffect(0.6)
-
-          Text("Syncing...")
-            .font(.caption2)
-            .foregroundStyle(.tertiary)
-        }
-      } else if refreshCompleted {
-        HStack(spacing: 4) {
-          Image(systemName: "checkmark")
-            .foregroundStyle(.green)
-            .font(.caption2)
-
-          Text("Updated")
-            .font(.caption2)
-            .foregroundStyle(.tertiary)
-        }
-        .transition(.opacity.combined(with: .scale))
-      } else {
-        Text("Last updated \(formatLastUpdate(stepManager.lastRefreshTime))")
-          .font(.caption2)
-          .foregroundStyle(.tertiary)
-      }
+      // Simple last updated text
+      Text("Last updated \(formatLastUpdate(stepManager.lastRefreshTime))")
+        .font(.caption2)
+        .foregroundStyle(.tertiary)
     }
   }
 
@@ -262,6 +280,9 @@ struct ContentView: View {
     VStack {
       // Refresh button with enhanced animation
       Button {
+        // Store steps before refresh
+        stepsBeforeRefresh = stepManager.todaySteps
+
         Task {
           await stepManager.refreshAllData()
           refreshCompleted = true

@@ -69,6 +69,7 @@
 		507EB0E52DD3A28600E9143E /* Exceptions for "SmartBreakWidget" folder in "SmartBreak" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				StatsWidget.swift,
 				WidgetEntry.swift,
 				WidgetProvider.swift,
 				WidgetView.swift,

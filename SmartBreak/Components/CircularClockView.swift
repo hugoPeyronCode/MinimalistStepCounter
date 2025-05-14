@@ -13,8 +13,8 @@ struct Clock: View {
   @State private var timer: Timer?
 
   let radius: CGFloat = 130
-  let barHeight: CGFloat = 20
-  let barWidth: CGFloat = 2
+  let barHeight: CGFloat = 15
+  let barWidth: CGFloat = 1
   let numberOfHours = 24
 
   var body: some View {
@@ -26,10 +26,6 @@ struct Clock: View {
         }
       }
       .frame(width: (radius + barHeight) * 2, height: radius + 60)
-
-//      Text("\(currentHour):\(currentMinutes)")
-//        .font(.caption)
-//        .foregroundStyle(.gray)
 
     }
     .onAppear {
@@ -46,9 +42,9 @@ struct Clock: View {
     let isPassed = hour < currentHour
     let rotationAngle = rotationAngleForHour(hour)
 
-    Rectangle()
+    Capsule()
       .foregroundStyle(isPassed ? .primary : .tertiary)
-      .frame(width: barWidth, height: barHeight)
+      .frame(width: isPassed ? barWidth * 2 : barWidth, height: isPassed ? barHeight : barHeight * 0.75)
       .clipShape(RoundedRectangle(cornerRadius: barWidth / 2))
       .rotationEffect(.radians(-rotationAngle))
       .animation(.spring(duration: 0.5, bounce: 0.1), value: isPassed)
@@ -57,10 +53,6 @@ struct Clock: View {
   private func rotationAngleForHour(_ hour: Int) -> CGFloat {
       // Angle de base pour chaque heure (demi-cercle de π radians)
       let baseAngle = CGFloat(Double.pi) - (CGFloat(hour) / CGFloat(numberOfHours - 1)) * CGFloat(Double.pi)
-
-      // Ajouter π/2 pour que la barre soit perpendiculaire au rayon
-      // À midi (heure 12), l'angle sera π/2 (vertical)
-      // Aux extrémités (heures 0 et 23), l'angle sera 0 ou π (horizontal)
       return baseAngle - CGFloat(Double.pi / 2)
   }
 
@@ -72,8 +64,8 @@ struct Clock: View {
       let centerX = (radius + barHeight)
       let centerY = radius + 30
 
-      let x = centerX + (radius + barHeight/2) * cos(angle)
-      let y = centerY - (radius + barHeight/2) * sin(angle)
+    let x = centerX + (radius + barHeight * 1.3) * cos(angle)
+    let y = centerY - (radius + barHeight * 1.3) * sin(angle)
 
       return CGPoint(x: x, y: y)
   }

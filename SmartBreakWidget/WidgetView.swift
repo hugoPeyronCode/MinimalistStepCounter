@@ -5,8 +5,6 @@
 //  Created by Hugo Peyron on 13/05/2025.
 //
 // 📄 WidgetView.swift
-// 📍 SmartBreakWidget extension
-// Remplace le contenu existant
 
 import WidgetKit
 import SwiftUI
@@ -93,4 +91,4 @@ struct SmartBreakWidgetEntryView: View {
             return 160
         }
     }
-} 
+}
